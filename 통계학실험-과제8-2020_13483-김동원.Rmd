@@ -1,0 +1,207 @@
+---
+title: "HOMEWORK 8"
+author: "KIM DONGWON"
+date: '2020 6 18 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+예제1. 어느 시장 조사기관은 여러 가지 대중매체가 주는 정보의 양을 비교하기 위해 다음과
+같은 실험을 계획하였다. 40명의 성인을 랜덤하게 추출하여 철저한 면접을 통해 TV, 신문,
+라디오, 잡지 중 어느 매체를 많이 접하는지에 따라 분류하였다. 다음 표는 최근에 일어난
+사건들에 대한 조사 대상자들의 인지도를 측정한 실험에서 얻어진 값들을 나타내고, 값이
+클수록 인지도가 높은 것을 의미한다. 이 자료를 이용하여 사람들의 인지도가 대중매체에
+따라 다르다고 할 수 있는지 유의수준 5%에서 검정해보자.
+```{r}
+num<-c(16,19,25,22,21,15,16,22,21,18,13,14,15,16,15,13,19,16,20,14,11,18,18,15,14,14,10,18,15,15,11,15,11,17,17,13,14,16,13,11)
+
+col<-factor(rep(1:4, c(10,11,9,10)))
+exp<-data.frame(num,col)
+fit<-lm(num~col, data = exp)
+anova(fit)
+
+```
+
+귀무가설: 사람들의 인지도가 대중매체에 따라 다르지 않다.(모평균 동일)
+대립가설: 사람들의 인지도가 대중매체에 따라 다르다.(모평균 동일하지 않다.)
+분산분석 결과, 검정통계량의 값은 8.2677이고 유의확률은 0.001이하로 매우 작은 것으로 나타났다. 따라서 유의수준 5%에서 모평균이 모두 동일하다는 귀무가설을 기각할 수 있다. 즉, 사람들의 인지도가 대중매체에 따라 다르다고 할 수 있다.
+
+
+예제2. 어느 회사의 마케팅 부서에서는 하나의 상품에 대해 세 가지 다른 디자인의 포장을
+적용한 후 이 상품들을 서로 다른 5군데의 상점에서 한 달 동안 판매하였다. 그리고 그 판매
+결과는 아래와 같다. 제품의 매출은 판매되는 상점과 제품의 포장 디자인에 따라 다르다고 할
+수 있는가? 적절한 가설을 쓰고 유의수준 5%에서 이를 검정하시오. 
+
+```{r}
+A<-factor(rep(1:5,3))
+B<-factor(rep(1:3, rep(5,3)))
+y<-c( 210, 230, 190, 180, 190, 195, 170, 200, 190, 193, 295, 275, 290, 275, 265)
+cor2<-data.frame(A,B,y)
+fit2<-lm(y~A+B, data = cor2)
+anova(fit2)
+```
+
+귀무가설1: 상점에 따라 제품의 매출에는 유의한 차이가 없다.
+대립가설1: 상점에 따라 제품의 매출에는 유의한 차이가 있다.
+귀무가설2: 상자에 따라 제품의 매출에는 유의한 차이가 없다.
+대립가설2: 상자에 따라 제품의 매출에는 유의한 차이가 있다.
+
+분산분석표 확인 결과, 상점(A)의 효과에 대한 유의 확률은 0.6114이고 상자(B)의
+효과에 대한 유의 확률은 3.396e-05다. 따라서 유의수준 5%에서 상점에 따라 제품의 매출에는 유의한 차이가 없지만 상자에 따라서는 제품의 매출에 유의한 차이가 있다. 
+
+예제3. 남녀의 성별과 고단백질로 구성된 아침 식사의 섭취 여부가 성인의 신체적 활동
+능력에 영향을 미치는지를 알아보기 위하여 랜덤하게 선택된 남녀 10명에 대해 각각 5명씩
+고단백질 아침식사와 저단백질 아침식사를 섭취하게 한 후, 신체적 능력을 테스트를 통해
+측정하였다. 측정된 점수가 높을수록 신체 활동 능력이 더 우수하다는 것을 의미한다. 실험
+결과가 아래와 같을 때, 주어진 자료에 대해 이원배치법을 적용한 후 그 결과를 해석하여라
+
+```{r}
+A<-factor(rep(rep(1:2,rep(5,2)),2))
+B<-factor(rep(1:2,rep(10,2)))
+levels(A) <- c("고단백질","저단백질")
+levels(B) <- c("남성","여성")
+y<-c(10, 7, 9, 6, 8, 5, 4, 7, 4, 5, 5, 4, 6, 3, 2, 3, 4, 5, 1, 2 )
+pro<- data.frame(A,B,y)
+fit3<- lm(y ~ A * B, data = pro)
+anova(fit3)
+
+```
+
+귀무가설: 고단백질 식사와 저단백질 식사에따라 운동능력에 유의한 차이가 없다.
+귀무가설: 성별에 따라 운동능력에 유의한 차이가 없다.
+귀무가설:  단백질 식사와 성별의 상호작용은 없다.
+분산분석 결과, 유의수준 5%에서 성별(B)과 단백질 식사(A)에 따른 상호작용은 존재하지 않는 것으로 나타났다 ( p-value=0.1554875). 이는 앞서 평균 그림을통해서도 확인할 수 있었다. 또한 고단백질 식사와 저단백질 식사에따라 운동능력에 유의한 차이가 있고, (p-value<0.001) 성별에 따라서도 운동능력에 유의한 차이가 있다.(p-value<0.001)
+
+#4
+```{r}
+library(MASS)
+str(crabs)
+A<- factor(rep(rep(1:2,rep(50,2)),2))
+B<- factor(rep(1:2,rep(100,2)))
+levels(A) <- c("B","O")
+levels(B) <- c("M","F")
+y<-crabs$RW
+cra<- data.frame(A,B,y)
+
+c1<-cra[cra$A=="B"& cra$B=="F",]
+c2<-cra[cra$A=="B"& cra$B=="M",]
+c3<-cra[cra$A=="O"& cra$B=="F",]
+c4<-cra[cra$A=="O"& cra$B=="M",]
+
+cr1<-c1$y ;boxplot(cr1);
+cr2<-c2$y ;boxplot(cr2);
+cr3<-c3$y ;boxplot(cr3);
+cr4<-c4$y ;boxplot(cr4); #1번째 질문
+interaction.plot(cra$A,cra$B,cra$y) # 2번째 질문
+```
+
+1번째 질문에 대해서는 눈으로 봤을 때 변수 sp, sex에 따라 나누어진 각 그룹에 반응변수 RW의 Boxplot그려보면 평균의 크기가 같다고 보기는 힘들다.cra$A=="O"& cra$B=="F"에서 다른 그룹보다 평균이 좀 큰 모습이 나타난다.
+2번째 질문에 대해서는 두 개의 선 그래프를 그렸을 때 두 직선이 평행하지 않으므로 변수 sp, sex간의 교호작용이 존재한다.
+
+#5
+```{r}
+qqnorm(c1$y)
+qqline(c1$y, col= "red")
+qqnorm(c2$y)
+qqline(c2$y, col= "red")
+qqnorm(c3$y)
+qqline(c3$y, col= "red")
+qqnorm(c4$y)
+qqline(c4$y, col= "red")
+```
+
+ 변수 sp, sex에 따라 나누어진 각 그룹에서 q-q plot을 통해 오차의 정규성을 확인해 보면, 4 그룹 모두에서 대부분 데이터들이 빨간 선 주위에 모여있음을 확인할 수 있으므로 오차의 정규성을 만족함을 알 수 있다.
+
+#6
+```{r}
+fit6<- lm(y ~ A * B, data = cra)
+anova(fit6)
+
+```
+
+귀무가설: 변수 sp에 따른 RW값에 유의한 차이가 없다.
+귀무가설: 변수 sex에 따른 RW값에 유의한 차이가 없다.
+귀무가설:  변수 sp와 변수 sex 사이 상호작용은 없다.
+분산분석 결과, 유의수준 5%에서  변수 sex(B)와 변수 sp(A)에 따른 상호작용은 존재하는 것으로 나타났다. ( p-value=0.0009884).  또한 변수 sp와 변수 sex에 따른 각각RW값의 차이는 존재한다. 각각 p-value값이 0.05보다 작아 귀무가설을 기각하기 때문이다.
+
+#7
+```{r}
+crop<- read.csv("C:/Users/r english/Desktop/r/crop.csv")
+crop$fertilizer <- factor(crop$fertilizer)
+table(crop$fertilizer)
+fit7<-lm(yield ~ fertilizer, data = crop)
+anova(fit7)
+plot(fit7)
+
+```
+
+귀무가설: yield값은 fertilizer에 따라 유의한 차이가 없다.(모평균 동일)
+대립가설: yield값은 fertilizer에 따라 유의한 차이가 있다.(모평균 동일하지 않다.)
+분산분석 결과, 검정통계량의 값은 7.8628이고 유의확률은 0.0006999 , 즉0.001이하인 매우 작은 값으로 나타났다. 따라서 유의수준 5%에서  fertilizer 종류에 관계없이 모평균이 모두 동일하다는 귀무가설을 기각할 수 있다. 즉,  yield값은는 fertilizer에 따라 유의한 차이가 있다.
+
+잔차도를 활용한 등분산성 가정의 경우 fertilizer값에 관계없이 오차의 산포가 일정한 모습이 나타나는 것으로 보아 등분산성 가정을 만족하는 것으로 보인다.
+
+
+#8
+```{r}
+math<- read.csv("C:/Users/r english/Desktop/r/math.csv")
+str(math)
+A<-factor(c(rep(1:2,c(48,82)),rep(1:2,c(223,387)),rep(1:2,c(67,54))))
+B<- factor(rep(1:3,c(130,610,121)))
+levels(A) <- c("M","F")
+levels(B) <- c("Algebra","analysis","Calculus")
+y<-math$score
+mat<- data.frame(A,B,y)
+
+m1<-mat[mat$A=="M"& mat$B=="Algebra",]
+m2<-mat[mat$A=="M"& mat$B=="analysis",]
+m3<-mat[mat$A=="M"& mat$B=="Calculus",]
+m4<-mat[mat$A=="F"& mat$B=="Algebra",]
+m5<-mat[mat$A=="F"& mat$B=="analysis",]
+m6<-mat[mat$A=="F"& mat$B=="Calculus",]
+ma1<-m1$y ;boxplot(ma1);
+ma2<-m2$y ;boxplot(ma2);
+ma3<-m3$y ;boxplot(ma3);
+ma4<-m4$y ;boxplot(ma4); 
+ma5<-m5$y ;boxplot(ma5); 
+ma6<-m6$y ;boxplot(ma6); 
+#1번째 질문
+interaction.plot(mat$A,mat$B,mat$y) # 2번째 질문
+```
+
+1번째 질문에 대해서는 눈으로 봤을 때 평균의 차이가 6그룹에서 다 같다고 보기엔 어려울것같다.
+2번째 질문에 대해서는 세 개의 선 그래프를 그렸을 때 그래프가 거의 평행한것으로 나타나 교호작용이 거의 없을 것이라 판단했다.
+
+#9
+```{r}
+qqnorm(m1$y)
+qqline(m1$y, col= "red")
+qqnorm(m2$y)
+qqline(m2$y, col= "red")
+qqnorm(m3$y)
+qqline(m3$y, col= "red")
+qqnorm(m4$y)
+qqline(m4$y, col= "red")
+qqnorm(m5$y)
+qqline(m5$y, col= "red")
+qqnorm(m6$y)
+qqline(m6$y, col= "red")
+```
+
+ 변수  gender와 course에 따라 나누어진 각 그룹에서 q-q plot을 통해 오차의 정규성을 확인해 보면, 6 그룹 모두에서 대부분 데이터들이 빨간 선 주위에 모여있음을 확인할 수 있으므로 오차의 정규성을 만족함을 알 수 있다.
+
+#10
+```{r}
+fit10<- lm(y ~ A * B, data = mat)
+anova(fit10)
+```
+
+Two-way ANOVA를 사용하되, interaction plot에서 교호작용이 조금이나마 존재한다다 파악해 *로 A와 B를 연결한다.
+
+귀무가설: 변수 gender에 따라서 score값에 유의한 차이는 없다.
+귀무가설: 변수 courses에 따라서 score값에 유의한 차이는 없다.
+귀무가설:  변수 gender와 변수 courses 사이 상호작용은 없다.
+분산분석 결과, 유의수준 5%에서  변수 courses(B)와 변수 gender(A)에 따른 상호작용은 존재하지 않는 것으로 나타났다. ( p-value=0.4629).  또한 변수 gender와 변수 courses에 따른 각각 score값의 차이는 존재한다. 각각 p-value값이 0.05보다 작아 귀무가설을 기각하기 때문이다.

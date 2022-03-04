@@ -1,0 +1,192 @@
+---
+title: "KIM DONGWON HOMEWORK 3"
+author: "KIM DONGWON"
+date: '2020 4 21 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+##예제1
+현재 주어진 자료는 일정 기간동안 지역 내의 모든 부동산 거래를 기록한 자료이므로 일종의 모집단이라고 생각할 수 있다. SalePrice 변수에 대해
+히스토그램을 그려보고 수치적 요약값을 구해보자. 모집단의 분포는 어떠한가?
+```{r}
+ames<-read.csv("C:/Users/r english/Desktop/r/ames.csv",header = T)
+hist(ames$SalePrice)
+summary(ames$SalePrice)
+qqnorm(ames$SalePrice)
+qqline(ames$SalePrice,col=2)
+```
+
+히스토그램에서 살펴볼 때 right-skewed한 모습을 보이고있다.정규분포 분위수 대조도를 보았을 때도 점들이 직선주위에 밀집하다고는 말하기 어려운 형태를 보이고 있다.
+
+##예제 2 
+ 이 지역에서 발생한 전체 부동산 거래 가격의 평균값을 추정해보려고
+ 한다. 지금처럼 모집단 전체를 알게 되는 경우는 매우 드물기 때문에 대부분의 경우에는 모집단의 부분집합인 표본을 선택하여 모수를 추정하게 된다. SalePrice에서 50개의 랜덤 표본을 선택해보자. 
+이 때, 모평균의 추정값은 무엇인가?
+```{r}
+sale<- sample(ames$SalePrice, size = 50)
+mean(sale)
+```
+
+##예제3
+ 예제 2 의 과정을 5000 번 반복하여 표본 평균의 표본 분포를 구해보자. 즉, 크기가 50 인 랜덤 표본을 선택하여 표본평균을 구하는 과정을 5000 번 반복하고 이 결과를 sample_mean50 이라는 이름의 벡터에 저장을 한다. sample_mean50 을 이용하여 히스토 그램을 sample_mean50 그려보자. 표본 평균의 분포는 어떠한가?
+
+```{r}
+sample_mean50<-c()
+for(i in 1:5000){x<-sample(ames$SalePrice, size = 50)
+sample_mean50[i] <- mean(x)}
+hist(sample_mean50)
+qqnorm(sample_mean50)
+qqline(sample_mean50,col=2)
+```
+
+히스토그램에서 표본평균의 분포는 정규분포에 근사함을 알 수 있다. 정규분포 분위수 대조도를 살펴보았을 때도 점들이 직선 위에 밀집하여 나타나고 있다 말할 수 있다.
+
+##예제4
+ 예제 3 의 sample_mean50 의 평균과 분산을 계산해보자. sample_mean50 의 평균 값은 모집단의 평균과 어떠한 관계가 있는가? sample_mean50 의 분산값은 모분산과 어떠 한 관계가 있는가? 
+```{r}
+mean(sample_mean50)
+mean(ames$SalePrice)
+var(sample_mean50)
+var(ames$SalePrice)
+ var(ames$SalePrice)/50
+```
+
+모집단의 분포가 정규분포가 아니므로 중심극한정리에서 이 문제를 생각해 볼 수 있는데 모평균은 근사적으로 표본평균과 값이 같고 표본분산은 모분산에서 표본의 크기만큼 나눈 값인데, 위에 코드를 입력하면 이러한 관계를 확인해볼 수 있다.
+
+##예제5
+ 예제 3 의 과정을 표본의 크기를 150 으로 증가시켜 반복해보자. 이 결과는 sample_mean150 에 저장한다. 표본의 크기에 따른 표본 평균의 분포는 어떠한가?
+```{r}
+sample_mean150<-c()
+for(j in 1:5000){x<-sample(ames$SalePrice, size = 150)
+sample_mean150[j] <- mean(x)}
+hist(sample_mean150)
+qqnorm(sample_mean150)
+qqline(sample_mean150,col=2)
+```
+
+표본평균의 분포를 비교해 보았을 때, 표본 크기가 클수록 표본평균의 분산이 작음을 히스토그램의 가로축을 통해 알 수 있다. 정규분포 분위수 대조도에서도 세로축을 통해 이를 확인할 수 있다.
+
+##예제6
+ames 자료를 이용해서 다음 문제들을 풀도록 한다.
+6-1. Yr.sold 변수는 부동산 거래가 이뤄진 년도를 의미하는 변수이다. 이 변수를 이용하여 각 연도별 평균 거래가격(SalePrice)의 변화를 그래프로 나타내보자.(plot 함수를 이용할 것) 어느 해의 거래가격이 가장 높았는가?
+```{r}
+View(ames)
+
+sam1<-ames[ames$Yr.Sold == 2006,]
+sam_sale1<-sam1$SalePrice
+mean(sam_sale1)
+sam2<-ames[ames$Yr.Sold == 2007,]
+sam_sale2<-sam2$SalePrice
+mean(sam_sale2)
+sam3<-ames[ames$Yr.Sold == 2008,]
+sam_sale3<-sam3$SalePrice
+mean(sam_sale3)
+sam4<-ames[ames$Yr.Sold == 2009,]
+sam_sale4<-sam4$SalePrice
+mean(sam_sale4)
+sam5<-ames[ames$Yr.Sold == 2010,]
+sam_sale5<-sam5$SalePrice
+mean(sam_sale5)
+L<-c(2006,2007,2008,2009,2010)
+M<-c(mean(sam_sale1),mean(sam_sale2),mean(sam_sale3),mean(sam_sale4),mean(sam_sale5))
+plot(L,M)
+```
+
+2007년의 평균거래가격이 가장 높았다.
+
+6-2. 위의 연도별 데이터 중에 2009년도 데이터만 사용하겠다고 하자. Mo.solde 변수를 이용해 2009년도 데이터를 분기별 (1분기: 1-3월, 2분기: 4-6월, 3분기: 79월, 4분기: 10-12월) 로 나누도록 한다. 각 분기별 거래가격(SalePrice)에 대한 히스토그램을 그려보자. 각 분기별로 거래가격의 분포가 달라지는가?
+```{r}
+sam9<-ames[ames$Yr.Sold == 2009,]
+View(sam9)
+data1<-sam9[sam9$Mo.Sold == c(1,2,3),]
+data2<-sam9[sam9$Mo.Sold == c(4.5,6),]
+data3<-sam9[sam9$Mo.Sold == c(7,8,9),]
+data4<-sam9[sam9$Mo.Sold == c(10,11,12),]
+a<-data1$SalePrice
+hist(a)
+b<-data2$SalePrice
+hist(b)
+c<-data3$SalePrice
+hist(c)
+d<-data4$SalePrice
+hist(d)
+
+
+```
+
+대체적으로 right-skewed한 모습을 갖고있다. 분기별 분포의 큰 변화는 없다.
+
+##예제7
+확률변수 X를 주사위를 n번 던져 1의 눈이 나온 횟수라고 하자. 이 때, 다음의 확률을 구하여라.
+7-1. 이항분포 하에서 (1) 10 번을 던져 1의 눈이 3번 이하로 나올 확률과 (2) 100번 던져 1의 눈이 30번 이하로 나올 확률을 구해보자.
+```{r}
+
+pbinom(3,10,1/6)
+
+pbinom(30,100,1/6)
+```
+
+7-2. 7-1.의 (1)과 (2)에서의 확률을 정규분포 하에서 구해보고, 7-1.의 값과 비교해보자.
+```{r}
+pnorm(3.5,5/3,sqrt(25/18))
+
+pnorm(30.5,50/3,sqrt(250/18))
+
+```
+
+표본의 크기가 클수록 이항분포에서 구한 값과 정규분포하에서 구한 값이 더 비슷하다. 그러므로 표본의 크기가가 클수록 이항분포가 정규분포에 근사함을 알 수 있었다.
+
+##예제8
+ 위와 같은 두 가지 선형 모형이 있다고 가정하자. 두 모형 모두𝑥∼𝑁(0,1)이라고 할 때, 각각의 모형을 따르는 100개의 자료를 만들고, 산점도를 만들어 비교해보자.
+```{r}
+x<-rnorm(100,0,1)
+e1<-rnorm(100,0,1)
+e2<-rnorm(100,0,50)
+y1<- 0.5+2*x+e1 
+y2<- 0.5+2*x+e2
+plot(sort(y1))
+plot(sort(y2))
+
+
+```
+ 
+ y1에 비해 y2가 더 넓은 분산을 갖고있다.
+
+##예제9
+표본의 크기가 10인 자료𝑥1,…𝑥10이 정규분포𝑁(100,7^2)으로부터의 랜덤표본이라고 하자. 다음과 같은 식이 성립함을 보이고자 한다. (𝑆2은 표본 분산) (𝑛−1)𝑆2 𝜎2 =∑𝑛𝑖=1(𝑥𝑖−𝑥)̄2 𝜎2 ∼𝜒2(𝑛−1) 모집단 정규분포를 1000개 생성하여 위의 다음과 같은 결과를 보여라. 힌트: R에서의 var()함수는 표본분산을 구하는 함수이다.
+```{r}
+n=10
+z<-c()  #정규분포를 1000개 생성해 나온 좌변의 값에 대한 히스토그램
+for (o in 1:1000) 
+  { x<-rnorm(10,100,7); z[o]<-(n-1)*var(x)/49 }
+hist(z, probability=T)
+
+y<-seq(0, 30, 0.1) #우변의 카이제곱분포
+fy<-dchisq(y,n-1) 
+lines(y, fy, col="red") 
+```
+
+
+
+##예제 10
+X가 이항분포𝐵(7,0.3)을 따른다고 하자. 균등분포𝑈(0,1)에서 랜덤 표본을 생성해 이항변수(Binomial)를 만들고, 이 과정을 100000번 반복해라. 그리고𝑃(𝑋=2)를 구해 다음의 값과 비교해보자. (이때, rbinom() 함수는 이용하지 말 것) 힌트: Bernoulli(p)변수는runif()함수로생성가능하고, Binomial(p,n)변수는Bernoulli(p)변수의 합으로 생각할 수 있다. dbinom(2,7,0.3) ## [1] 0.3176523
+```{r}
+
+X<-c()  
+for (i in 1:100000) {
+p <- 0.3; n <- 7; U <- runif(n, min = 0, max = 1);
+X[i] <- sum(U < p)  }
+sum(X==2)/100000
+
+
+
+```
+
+dbinom(2,7,0.3)과 매우 근사한 값이 나온다.
+

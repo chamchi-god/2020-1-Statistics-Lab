@@ -1,0 +1,147 @@
+---
+title: "HOMEWORK5"
+author: "KIM DONGWON"
+date: '2020 5 22 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+예제1. (textbooks.txt) 주어진 자료는 UCLA 내의 서점과 Amazon.com 에서 판매되는 교재 들의 가격에 대한 자료이다. 2010년 봄학기에 개설된 UCLA의 강의 중에서 73개를 선택하여 각 강의에 쓰이는 교재의 온라인 판매 가격(amazNew) 과 오프라인의 판매 가격(uclaNew)을 조사하였다. 교재의 판매가격은 판매 장소 (온라인 또는 오프라인)에 따라 차이가 난다고 볼 수 있는가? 적절한 가설을 세우고 유의수준 5%에서 이를 검정하시오.
+```{r}
+text<-read.table("C:/Users/r english/Desktop/r/textbooks.txt")
+t.test(text$uclaNew,text$amazNew, paired = T, alternative = "two.sided")
+```
+
+귀무가설: 교재의 온라인 판매가격과 오프라인의 판매가격은 차이가 없다.
+대립가설: 교재의 온라인 판매가격과 오프라인의 판매가격은 차이가 있다.
+검정결과 P-VALUE는 0에 가까운것으로 보아 유의수준 5%에서 귀무가설을 기각한다. 즉 차이가 있다. 
+
+예제2. (run10samp.txt) 주어진 자료는 2012년 Washington, DC에서 열렸던 Cherry Blossom 10 mile run 경기에서 완주를 한 선수 100명의 자료이다. 주요 변수에 대한 설명 은 다음과 같다. 
+성별에 따른 완주시간은 차이가 있는가? 적절한 가설을 세우고 유의수준 5%에서 이를 검정하 시오.
+```{r}
+run<-read.table("C:/Users/r english/Desktop/r/run10samp.txt", header = T)
+tapply(run$time, run$gender, mean)
+#등분산 여부 검정
+var.test(run$time ~ run$gender) # p-value는 0.1833이므로 유의수준 5%에서 등분산이란 가설을 채택할 수 있다.
+#등분산을 가정한 채 독립 이표본 검정 
+t.test(run$time ~ run$gender, var.equal=T ) 
+```
+
+귀무가설: 남자의 완주시간과 여자의 완주시간엔 차이가 없을 것이다.
+대립가설: 남자의 완주시간과 여자의 완주시간엔 차이가 있을 것이다.
+검정결과 p-value가 0에 아주 가까우므로 귀무가설을 기각할 것이다. 그러므로 여자의 완주시간이 남자의 완주시간보다 클 것이다.
+
+예제 3.
+해당 자료의 ‘diff’ 열 만을 사용하여 (예제 1)와 같은 결과를 도출해 보아라.
+```{r}
+text<-read.table("C:/Users/r english/Desktop/r/textbooks.txt")
+dif<- text$diff
+t.test (dif, mu=0) 
+```
+
+예제 4.
+우리는 보통 같은 물건이면 온라인이 오프라인보다 판매 가격이 싸다고 생각한다. 이 생각이 맞
+는지 유의 수준 5%에서 검정해 보아라.
+```{r}
+text<-read.table("C:/Users/r english/Desktop/r/textbooks.txt")
+t.test(text$uclaNew,text$amazNew, paired = T, alternative = "greater")
+```
+
+귀무가설: 같은물건이어도 온라인과 오프라인 가격은 같다.
+대립가설:같은 물건이면 온라인이 오프라인보다 판매 가격이 싸다.
+p-value값이 0에 매우 가까우므로 귀무가설을 유의수준 5%에서 기각한다. 즉,같은 물건이면 온라인이 오프라인보다 판매 가격이 싸다.
+
+예제 5.
+(에제 4)의 결과와 (예제 1)의 결과에서 p-value를 비교해 보아라.
+또한, (예제 4)의 경우 온-오프라인 판매 가격의 차이에 대한 95% 신뢰 구간은 어떻게 되는가?
+
+## A.(에제 4)의 결과와 (예제 1)의 결과에서 p-value값을 비교해보면 예제 4의 p-value가 예제 1의 p-value의 절반임을 알 수 있다. 예제 4에서 95% 신뢰구간은 paired t-test결과 (9.981505,Inf)이다.
+
+예제6
+다음 두 줄을 각각 실행해보고 F 통계량과 confidence interval, 그리고 p-value 를 중심으로 두 결
+과의 연관성을 설명해 보아라.
+```{r}
+paint<-read.table("C:/Users/r english/Desktop/r/paint.txt")
+var.test(paint[paint$group == 1,]$time, paint[paint$group == 2,]$time )
+var.test(paint[paint$group == 2,]$time, paint[paint$group == 1,]$time )
+```
+
+1번째 줄은 F = 1.8333 p-value = 0.38
+95 percent confidence interval: 0.4553741 7.3809893
+2번째 줄은  F = 0.54545 p-value = 0.38
+95 percent confidence interval: 0.1354832 2.1959968
+두 줄의 차이는 분산의 비가 역수관계란 것이다. 이때 값들을 비교해 보면 F통계량은 역수로 나타나고, p-value값은 같다.
+ F통계량이 다르기 때문에 95%신뢰구간은 다르게 나타난다.
+
+예제 7
+위 화면에서 시행한 검정을 t.test 함수를 사용하지 않고 직접 통계량을 계산하여 검정해 보아라
+```{r}
+paint1<-(paint[paint$group == 1,]$time)
+paint2<-(paint[paint$group == 2,]$time)
+n<-nrow(paint)
+n1<-nrow(paint[paint$group == 1,])
+n2<-nrow(paint[paint$group == 2,])
+x1 <- mean(paint1)
+x2 <- mean(paint2)
+s1 <- var(paint1)
+s2 <- var(paint2)
+sp <- ((n1-1)*s1+(n2-1)*s2)/(n1+n2-2)
+T <- (x1-x2 -0)/ sqrt(sp*(1/n1+1/n2))
+pt(T,18, lower.tail = F)
+```
+```
+
+예제 8.
+40세 이상의 참가자들에 한해서도 성별에 따른 완주 시간에 차이가 있는지 유의수준 5%에서 검
+정해 보아라.
+```{r}
+run8<-run[run$age>=40,]
+tapply(run8$time, run8$gender, mean)
+t.test(run8$time~run8$gender )
+```
+ 
+ 귀무가설: 40세 이상의 참가자들에 한했을 때 성별에 따른 완주시간의 차이는 없다.
+ 대립가설: 40세 이상의 참가자들에 한했을 때 성별에 따른 완주시간의 차이는 있다.
+ p-value = 0.0126이므로 유의수준 5%에서 귀무가설을 기각한다. 즉, 40세 이상의 참가자들에 한했을 때 여자의 완주시간이 남자의 완주시간보다 길것이다.
+ 
+ 조건
+```{r}
+run10<- read.table("C:/Users/r english/Desktop/r/run10samp.txt", header = T)
+run10_VA = run10[run10$state == "VA",]   
+run10_MD = run10[run10$state == "MD",]  
+run10_DC = run10[run10$state == "DC",]  
+run10_NY = run10[run10$state == "NY",] 
+```
+ 
+예제 9
+위의 4개 state 들에 대하여 각각 완주 시간의 평균을 구하고, 그 값이 가장 큰 곳과 가장 작은
+곳에 한해 완주 시간에 차이가 있는지 유의 수준 5%에서 검정하여라.
+```{r}
+mean(run10_VA$time)
+mean(run10_MD$time)
+mean(run10_DC$time)
+mean(run10_NY$time)
+t.test(run10_MD$time,run10_NY$time)
+
+```
+
+귀무가설: 4개의 state들중 완주시간의 평균이이 가장 큰 state와 평균이 가장작은 state에서 완주시간에 차이는 없다.
+대립가설: 4개의 state들중 완주시간의 평균이이 가장 큰 state와 평균이 가장작은 state에서 완주시간에 차이는 있다.
+run10_MD$time와 run10_NY$time들 사이에 완주시간 차이를 검정했을 때 p-value=0.3372이므로 유의수준 5%에서 귀무가설을 기각하지 않을 것이다. 
+
+예제10
+(예제 9)에서 평균 시간이 가장 큰 곳과 가장 작은 곳을 비교하였기 때문에, 4개의 state 들 중 어
+떤 두 곳의 조합을 선택하더라도 모평균의 비교를 위한 검정을 실시했을 때 p-value 가 (예제 9)
+의 그것보다 크거나 같다고 예상할 수 있다. (p-value가 클수록 모평균의 차이가 0에 가깝다는 뜻
+이므로 그렇다.) 이 예상이 실제로 맞는지 확인해 보고, 만약 틀리다면 왜 그런지 설명해 보아라.
+
+```{r}
+ t.test(run10_MD$time,run10_NY$time,  alternative = "less") #평균의 차이가 가장 큰 경우
+ t.test(run10_MD$time,run10_VA$time,  alternative = "less") #아래 검정에서 더 p-value가 작다
+
+```
+
+반례를 찾음으로써 답은 틀리다고 말할 수 있는데, 그 이유는 평균에선 가장 차이날지언정 표본분산에 대해서는 고려하지 않았기 떄문에 p-value값이 그것보다 더 크거나 같다고 단정지을 수 없다.

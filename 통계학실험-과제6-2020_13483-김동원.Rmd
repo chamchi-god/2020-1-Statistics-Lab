@@ -1,0 +1,167 @@
+---
+title: "HOMEWORK 6"
+author: "KIM DONGWON"
+date: '2020 5 26 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+예제1. 다음은 랜덤하게 선택된 806명의 Facebook 사용자들에 대해 Facebook의 privacy setting 기능의 사용법을 알고 있는지에 대해 조사한 결과이다. 성별과 privacy setting의 사 용법 인지 여부가 관계가 있다고 할 수 있는가? 유의수준 5%에서 이를 검정하시오.
+```{r}
+male<-c(288,10,61)
+female<-c(378,7,62)
+
+x<- cbind(male, female)
+x
+chisq.test(x)
+
+```
+
+검정 통계량은 3.1291이고 p-value는 약 0.2092이므로 유의수준 5%에서 귀무가설을 기각할 수 없다. 성별과 privacy setting의 사용법 인지 여부는 서로 독립이다.
+
+예제2. 심폐 소생술은 심장과 폐의 활동이 갑자기 멈추었을 때 실시하는 응급처치방법이다. 심폐 소생술 시행 시 혈액 뭉침 등을 완화하기 위해 혈액 희석제(blood thinner)을 처방하는 경우가 있는데, 만약 심폐 소생술로 인해 신체 내부 손상을 입은 경우라면 혈액 희석제는 환자에게 치명적일 수도 있다. 다음은 심폐 소생술을 받은 환자들 중 혈액 희석제를 사용하지 않은 환자들 50명과 혈액 희석제를 사용한 환자들 40명을 대상으로 그들의 생존 여부를 조사 한 결과이다.
+```{r}
+use<-c(11,39)
+notuse<-c(14,26)
+y<- rbind(use, notuse)
+y
+chisq.test(y)
+
+```
+
+검정 통계량은 1.2801이고 p-value는 약  0.2579이므로 유의수준 5%에서 귀무가설을 기각할 수 없다. 혈액 희석제 사용 여부에 따른 생존률은 차이가 없다.
+
+예제 3. 모비율의 정규근사를 눈으로 확인하고자 한다. rbinom 함수를 이용해 이항분포 B(500,0.35)를 따르는 랜덤표본 10000개를 추출하여 정규근사 통계량 Z = ˆ p−p√ ˆ p(1−ˆ p)/n 값들을 계산 후 히스토그램을 그려보자. 이에 N(0,1)의 확률밀도함수를 덧그려 다음과 같은 그래프를 그려보자.
+```{r}
+n<-500; p<-0.35
+X<-rbinom(10000,n,p)
+phat3<-X/n
+#히스토그램
+Z<-(phat3-p)/sqrt(phat3*(1-phat3)/n)
+hist(Z,xlim = c(-3,3), freq = F)
+# N(0,1)의 확률밀도함수
+x3<- seq(-3, 3, by=0.1) 
+fx3<-dnorm(x3, mean=0, sd=1)
+lines(x3,fx3,col= "red")
+
+
+
+
+
+```
+
+예제 4. 앞의 예제2에서 희석제를 사용하지 않은 경우의 생존률 p1과 사용한 경우의 생존률 p2의 차(p1−p2)에 대한 95% (근사) 신뢰구간을 계산하시오.
+```{r}
+p1hat<-11/50 ; p2hat<-14/40; n1<-50; n2<-40
+(p1hat-p2hat)+qnorm(c(0.025,0.975),0,1)*sqrt((p1hat*(1-p1hat)/n1)+(p2hat*(1-p2hat)/n2))
+
+
+```
+
+(p1−p2)에 대한 95% (근사) 신뢰구간은(-0.31716886  0.05716886)이다.
+
+예제 5. 강의시간에 제공된 survey.txt 자료에서 변수 W.Hnd는 글씨쓰는 손(오른손 혹은 왼손)을 나타낸다. 성별과 글씨쓰는 손은 서로 독립이라고 말할 수 있는가? 유의수준 5%에서 이를 검정하시오.
+```{r}
+survey<-read.table("C:/Users/r english/Desktop/r/survey.txt", header = T)
+y5<-table(survey$Sex,survey$W.Hnd)
+y5
+chisq.test(y5)
+```
+
+검정 결과 검정 통계량의 값은 0.23563이고 p-value는 0.6274로 계산되었다. 따라서 유의수준 5%에서 귀무가설을 기각할 수 없으며 따라서 성별과 글씨쓰는 손 서로 독립이라고 말할 수 있다.
+
+예제 6. R에 내장된 데이터 chickwts는 6가지 사료보충제에 따른 병아리들의 몸무게를 나타낸 자료다. 몸무게가 300 이상인 경우 ‘우량’으로 판정한다고 하자. 사료보충제의 종류와 우량 여부가 관계가 있다고 할 수 있는가? 유의수준 5%에서 이를 검정하시오.
+(참고: 내장된 데이터이므로 별도의 불러오기 없이 다음의 코드로 데이터를 이용할 수 있다) chickwts = chickwts
+```{r}
+ chickwts = chickwts
+a<-nrow(chickwts[chickwts$feed=="casein"&chickwts$weight>=300,]);
+b<-nrow(chickwts[chickwts$feed=="meatmeal"&chickwts$weight>=300,]);
+c<-nrow(chickwts[chickwts$feed=="sunflower"&chickwts$weight>=300,])
+d<-nrow(chickwts[chickwts$feed=="soybean"&chickwts$weight>=300,])
+e<-nrow(chickwts[chickwts$feed=="linseed"&chickwts$weight>=300,])
+f<-nrow(chickwts[chickwts$feed=="horsebean"&chickwts$weight>=300,])
+g<-nrow(chickwts[chickwts$feed=="casein"&chickwts$weight<300,])
+h<-nrow(chickwts[chickwts$feed=="meatmeal"&chickwts$weight<300,])
+i<-nrow(chickwts[chickwts$feed=="sunflower"&chickwts$weight<300,])
+j<-nrow(chickwts[chickwts$feed=="soybean"&chickwts$weight<300,])
+k<-nrow(chickwts[chickwts$feed=="linseed"&chickwts$weight<300,])
+l<-nrow(chickwts[chickwts$feed=="horsebean"&chickwts$weight<300,])
+big<-c(a,b,c,d,e,f)
+small<-c(g,h,i,j,k,l)
+m<-rbind(big,small)
+m
+chisq.test(m)
+
+
+```
+
+검정 결과 검정 통계량의 값은 23.96이고 p-value는 0.000221로 계산되었다. 따라서 유의수준 5%에서 귀무가설을 기각할 수 있으며 따라서 사료보충제의 종류와 우량 여부는 서로 독립이라고 말할 수 없다. 하지만 기대빈도가 5보다 작기 때문에 이에 대한 경고 메시지를 확인할 수 있다.그러므로 통계적으로 유의미한 결과는 아니다. 
+
+예제 7.
+cdc.txt 데이터는 미국에서 실시된 대규모 전화설문조사 자료로서 건강과 관련된 생활 습관 등을 조사한 자료이다. 주요 변수에 대한 설명은 다음과 같다.
+• genhlth : 범주형 자료, 전반적인 건강상태 (excellent/very good/good/fair/poor) • exerany : 범주형 자료, 지난달의 운동 여부 (1=yes, 0=no) • age : 숫자형 자료, 나이 (year)
+60세 이상의 노년층에서, (지난달의) 운동 여부와 전반적인 건강상태는 관계가 있다고 할 수 있는가? 유의수준 5%에서 이를 검정하시오.
+
+```{r}
+cdc<-read.table("C:/Users/r english/Desktop/r/cdc.txt", header = T)
+cdc60<-cdc[cdc$age>=60,]
+y7<-table(cdc60$exerany,cdc60$genhlth)
+y7
+chisq.test(y7)
+```
+
+검정 통계량은 240.48이고 p-value는 < 2.2e-16이므로 유의수준 5%에서 귀무가설을 기각할 수 있다. 60세 이상의 노년층에서 운동 여부와 전반적인 건강상태는 서로 독립이 아니다.
+
+예제 8. R패키지 MASS에 내장되어 있는 Aids2 데이터는 1991년에 기록된 호주의 에이즈 환자에 대한 자료이다. library(MASS) Aids2 = Aids2
+주요 변수에 대한 설명은 다음과 같다.
+• sex : 범주형 자료, 성별 • diag : 숫자형 자료, 에이즈 판정을 받은 날짜 (Julian date) • death : 숫자형 자료, 사망 날짜 혹은 관찰 마지막 날짜 (Julian date) • status : 범주형 자료, 관찰 마지막 날 기준 현재상태. 생존(“A”; alive) 혹은 사망(“D”; dead)
+자연수로 표시되는 율리우스 날짜(Julian date)는 기준일로부터 매일 1일씩 더하여 나타내는 날짜 표기법이다. 관찰 마지막 날 현재 사망한 환자들의 경우만을 생각하자. 사망자들의 ‘성별’과 ‘판정날로부터 500일 이상 생존 여부’는 서로 관계가 있다고 할 수 있는가? 유의수준 5%에서 이를 검정하시오.
+```{r}
+ library(MASS) 
+Aids2 = Aids2
+Aids2_8<-Aids2[Aids2$status== "D",]
+A<-nrow(Aids2_8[Aids2_8$death-Aids2_8$diag>=500&Aids2_8$sex=="M",])#500일 이상 생존한 남자 
+B<-nrow(Aids2_8[Aids2_8$death-Aids2_8$diag<500&Aids2_8$sex=="M",])#500일 보다 적게 생존한 남자 
+C<-nrow(Aids2_8[Aids2_8$death-Aids2_8$diag>=500&Aids2_8$sex=="F",])#500일 이상 생존한 여자 
+D<-nrow(Aids2_8[Aids2_8$death-Aids2_8$diag<500&Aids2_8$sex=="F",])#500일 보다 적게 생존한 여자 
+MAN<-c(A,B)
+WOMAN<-c(C,D)
+E<-rbind(MAN,WOMAN)
+chisq.test(E)
+```
+
+검정 통계량은 0.031968이고 p-value는 약 0.8581이므로 유의수준 5%에서 귀무가설을 기각할 수 없다.  사망자들의 ‘성별’과 ‘판정날로부터 500일 이상 생존 여부’ 서로 독립이다.
+
+예제 9.
+다음의 데이터는 어떤 질병에 대한 신약의 효과를 확인하고자 진행된 실험 데이터이다. 총 105명의 환자 중 50명의 환자에게는 신약을 투여하고 나머지 55명은 대조군으로 두어 일주일 후 상태가 개선되었는가를 확인하였다. 약물이 효과가 있다고 말할 수 있는가? 유의수준 5%에서 이를 검정하시오.
+2
+drug = read.csv("https://goo.gl/j6lRXD")
+```{r}
+drug = read.csv("https://goo.gl/j6lRXD")
+y9<-table(drug$treatment,drug$improvement)
+y9
+chisq.test(y9)
+```
+
+검정 결과 검정 통계량의 값은 4.6626이고 p-value는 0.03083로 계산되었다. 따라서 유의수준 5%에서 귀무가설을 기각할 수 있으며 따라서 약물이 효과가 있다고 말할 수 있다.
+
+예제 10.
+왼손잡이는 유전일까? 이에 답하기 위해 250명의 성인을 대상으로 본인과 그 부모에 대해 주로 쓰는 손을 조사했다. 왼손잡이가 유전이라는 결론을 내릴 충분한 근거가 있는가? 유의수준 5%에서 검정하시오.
+
+```{r}
+left <-c(8,10,12)
+right <-c(178,21,21)
+l<-rbind(left,right)
+l
+chisq.test(l)
+#병합
+left2 <-c(8,22)
+right2 <-c(178,42)
+l2<-rbind(left2,right2)
+chisq.test(l2)
+```
+
+검정 통계량은 41.037이고  p-value는 1.227e-09이므로 유의수준 5%에서 귀무가설을 기각할 수 있다. 왼손잡이와 유전은 서로 독립이 아니다. 근데 기대빈도가 5보다 작기 때문에 이에 대한 경고 메시지를 확인할 수 있다. 이러한 문제를 막기 위해서는 빈도수가 작은 범주들은 서로 병합하는 방법을 쓸 수 있다. 그래서 왼손잡이 부모가 1이거나 2인경우를 합쳐서 생각해볼것이다. 이 때 검정 통계량은 37.984이고 p-value는 7.133e-10이므로 유의수준 5%에서 귀무가설을 기각할 수 있다. 왼손잡이와 유전은 서로 독립이 아니다.
